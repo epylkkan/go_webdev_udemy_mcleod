@@ -4,7 +4,7 @@ https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test
 
 Install CloudSQL Auth proxy 
 
-https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
 
 chmod +x cloud_sql_proxy
 
