@@ -23,5 +23,5 @@ install workbench
 create mysql db on gcp
 
 
-conenct from GCP cloud shell: gcloud sql connect gotraining --user=root --quiet
+connect from GCP cloud shell: gcloud sql connect gotraining --user=root --quiet
 
