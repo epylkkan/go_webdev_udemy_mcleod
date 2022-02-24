@@ -18,7 +18,7 @@ var db *sql.DB
 func main() {
 	var err error
 	//db, err = sql.Open("mysql", "root:mypassword@tcp(127.0.0.1:3306)/test")
-	db, err = sql.Open("mysql", "root:Purpletree462@tcp(35.228.143.206:3306)/test")
+	db, err = sql.Open("mysql", "root:mypassword@tcp(35.228.143.206:3306)/test")
 	check(err)
 	defer db.Close()
 
