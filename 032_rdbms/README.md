@@ -13,8 +13,12 @@ Start CloudAQL Auth proxy
 
 ./cloud_sql_proxy -instances=heroic-oarlock-340615:europe-north1:gotraining=tcp:3306
 
+
+DB prompt:
 mysql -u root -p --host 127.0.0.1 --port 3306
 
+
+=====================
 
 install mysql (community edition)
 
@@ -24,4 +28,12 @@ create mysql db on gcp
 
 
 connect from GCP cloud shell: gcloud sql connect gotraining --user=root --quiet
+
+=======================
+
+install mysql
+install workbench
+create mysql db on aws
+connect workbench to rds mysql db
+https://www.youtube.com/watch?v=k68Y-XYapEI
 

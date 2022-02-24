@@ -11,9 +11,9 @@ GOOS=linux GOARCH=amd64 go build -o expiresession
 3)
 GCP
 
-Create VN expire
+Create VM expire
 SSH from the consolo
-mKdir expire -> cd expire -> mkdiir templates
+mkdir expire -> cd expire -> mkdir templates
 Upload binary and templates  (SSH -> star)
 chmod 777 expiresession
 RUN ./expiresession

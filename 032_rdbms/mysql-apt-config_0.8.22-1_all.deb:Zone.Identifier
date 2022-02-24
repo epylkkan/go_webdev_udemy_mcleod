@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://dev.mysql.com/
+HostUrl=https://repo.mysql.com//mysql-apt-config_0.8.22-1_all.deb
