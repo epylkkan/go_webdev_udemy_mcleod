@@ -6,11 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"net/http"
-	/*
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/compute/v1"
-	*/
+	"cloud.google.com/go/compute/metadata"
+
 )
 
 var db *sql.DB
@@ -18,9 +15,11 @@ var db *sql.DB
 func main() {
 	var err error
 	//db, err = sql.Open("mysql", "root:mypassword@tcp(127.0.0.1:3306)/test")
-	db, err = sql.Open("mysql", "root:mypassword@tcp(35.228.143.206:3306)/test")
+
+	// use GCP CloudSQL private IP (public IP was not removed)
+	db, err = sql.Open("mysql", "root:Purpletree462@tcp(10.31.32.3:3306)/test") 
 	check(err)
-	defer db.Close()
+	// defer db.Close()
 
 	err = db.Ping()
 	check(err)
@@ -31,10 +30,11 @@ func main() {
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.HandleFunc("/amigos", amigos)
 	http.ListenAndServe(":80", nil)
+	defer db.Close()
 }
 
 func index(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "Hello from AWS.")
+	io.WriteString(w, "Hello from GCP.")
 }
 
 func ping(w http.ResponseWriter, req *http.Request) {
@@ -71,49 +71,13 @@ func check(err error) {
 }
 
 func getInstance() string {
-//	ctx := context.Background()
-
-	/*
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
-	if err != nil {
-			log.Fatal(err)
-	}
-
-	computeService, err := compute.New(c)
-	if err != nil {
-			log.Fatal(err)
-	}
-
-	// Project ID for this request.
-	project := "my-project" // TODO: Update placeholder value.
-
-	// The name of the zone for this request.
-	zone := "my-zone" // TODO: Update placeholder value.
-
-	// Name of the instance resource to return.
-	instance := "my-instance" // TODO: Update placeholder value.
-*/
-/*
-	resp, err := computeService.Instances.Get(project, zone, instance).Context(ctx).Do()
-	if err != nil {
-			log.Fatal(err)
-	}
-
-	// TODO: Change code below to process the `resp` object:
-	fmt.Printf("%#v\n", resp)
-
-	*/
-	/*
-	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
+	
+	// GCP version
+	
+	c, err := metadata.InstanceName()
 	if err != nil {
 		fmt.Println(err)
-		return err.Error()
 	}
 
-	bs := make([]byte, resp.ContentLength)
-	resp.Body.Read(bs)
-	resp.Body.Close()
-	return string(bs)
-	*/
-	return ""
+	return c
 }
