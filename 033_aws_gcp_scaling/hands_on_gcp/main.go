@@ -17,7 +17,7 @@ func main() {
 	//db, err = sql.Open("mysql", "root:mypassword@tcp(127.0.0.1:3306)/test")
 
 	// use GCP CloudSQL private IP (public IP was not removed)
-	db, err = sql.Open("mysql", "root:Purpletree462@tcp(10.31.32.3:3306)/test") 
+	db, err = sql.Open("mysql", "root:mypassword@tcp(10.31.32.3:3306)/test") 
 	check(err)
 	// defer db.Close()
 
