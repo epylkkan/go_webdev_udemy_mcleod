@@ -35,7 +35,7 @@ INSTANCE=${PROJECT}:${REGION}:${ROOT}
 
 DBNAME=test
 DBUSER=root
-DBPASS=Purpletree462
+DBPASS=mypassword
 
 
 ===================
