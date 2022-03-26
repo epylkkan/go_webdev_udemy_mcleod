@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"gopkg.in/mgo.v2/bson"
 	"cloud.google.com/go/firestore"
-	"google.golang.org/api/option"
+	//"google.golang.org/api/option"
 	"context"
 	"fmt"
 	"log"
 	"io"
-	"encoding/json"	
+	//"encoding/json"	
 	//"google.golang.org/api/iterator"
 
 	//"./controllers"
@@ -19,11 +19,12 @@ import (
 
 var ctx = context.Background()
 //var client *firestore.Client
-var opt = option.WithCredentialsFile("../../../../service_accounts/042/trim-diode-344014-af63a3b83268.json")
+//var opt = option.WithCredentialsFile("./trim-diode-344014-af63a3b83268.json")
 //var opt = option.WithCredentialsFile("firestore-sa@trim-diode-344014.iam.gserviceaccount.com")
 //var opt = option.WithCredentialsFile("trim-diode-344014@appspot.gserviceaccount.com")
 //var client, err = firestore.NewClient(ctx, "trim-diode-344014", opt)
-var client, err = firestore.NewClient(ctx, "trim-diode-344014@appspot.gserviceaccount.com", opt)
+//var client, err = firestore.NewClient(ctx, "trim-diode-344014", opt)
+var client, err = firestore.NewClient(ctx, "trim-diode-344014")
 
 
 type User struct {
@@ -51,9 +52,11 @@ func (s *server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 func (s *server) routes() {
 
    s.router.GET("/", Index) 
+   /*
    s.router.GET("/user/:id", GetUser) 
    s.router.POST("/user", CreateUser) 
    s.router.DELETE("/user/:id", DeleteUser) 
+   */
 }
 
 func main() {
@@ -65,36 +68,19 @@ func main() {
 
 	s := newServer(client)
 	server := http.Server{
-        Addr:         ":" + "8080",
+        Addr:         ":" + "80",
         Handler:      s,
 	}    
 	server.ListenAndServe()
 }
 
 func Index(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Println("huhuu")
 	io.WriteString(w, "huhuu")
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+//func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
-	//fmt.Println(p.ByName("id"))
-	//fmt.Println(r)
-	//fmt.Println(ctx)
-	//fmt.Println(client)
-	//iterator := userCollection.createIterator()
-	/*
-	iter := client.Collection("users").Documents(ctx)
-	for {
-        doc, err := iter.Next()
-        if err == iterator.Done {
-                break
-        }
-        if err != nil {
-                log.Fatalf("Failed to iterate: %v", err)
-        }
-        fmt.Println(doc.Data())
-}
-*/
 	/*
 	id := p.ByName("id")
 
@@ -106,35 +92,21 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	//oid := bson.ObjectIdHex(id)
 
 	//u := models.User{}
-
+/*
 	u, err := client.Collection("users").Doc(p.ByName("id")).Get(ctx)
 	if u != nil {
-	 //fmt.Println(u)
-	 /*
-	 for {
-		doc, err := u.Next()
-		if err == iterator.Done {
-				break
-		}
-		if err != nil {
-				//return fmt.Errorf("documents iterator: %v", err)
-				io.WriteString(w, err.Error())
-		}
-		//fmt.Fprintf(w, "%s: %s", doc.Ref.ID, doc.Data()["name"])
-		io.WriteString(w, doc.Data()["name"])
-	}
-	*/
-
 	 //io.WriteString(w, u.Data().id)
 	 //io.WriteString(w, u.string())
 	}
-	
+*/	
 	//fmt.Println(err)
 	//w.Header().Set("Content-Type", "application/json")
 	//w.WriteHeader(http.StatusOK) // 200
 
+	/*
 	io.WriteString(w, u.Data()["name"].(string))
 	io.WriteString(w, err.Error())
+	*/
 	//io.WriteString(w, json.Marshal(client))
 	
 	/*
@@ -153,8 +125,9 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	w.WriteHeader(http.StatusOK) // 200
 	fmt.Fprintf(w, "%s\n", uj)
 	*/
-}
+//}
 
+/*
 func CreateUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {	
 	
 	fmt.Println("Add user")
@@ -198,7 +171,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.WriteHeader(404)
 		return
 	}
-*/
+
 	w.WriteHeader(http.StatusOK) // 200
 	fmt.Fprint(w, "Deleted user", oid, "\n")
 }
+*/
