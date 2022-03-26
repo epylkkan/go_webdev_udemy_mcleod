@@ -1,8 +1,11 @@
 GCP 
 
 When creating VM click "Deploy Container"
+
 Container image: toddmcleod/golang-hello-world
+
 Enable http
+
 docker run -d -p 80:80 toddmcleod/golang-hello-world
 
 
