@@ -1,3 +1,7 @@
+gcloud config set account epylkkan@gmail.com
+gcloud config set project trim-diode-344014  // project ID for ep-appengine
+gcloud app deploy app.yaml --project=trim-diode-344014 -v 1
+
 In this step:
 We will delete a user from mongodb.
 Example in this directory is for Firestore,  Mongo code prepared by the teacher is in the subdir ./mongodb

@@ -1,0 +1,25 @@
+GCP: Create CloudSQL PostgreSQL 
+
+
+Command line (done in 032_rdbms):
+
+https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test
+
+Install CloudSQL Auth proxy
+
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+
+chmod +x cloud_sql_proxy
+
+Start CloudAQL Auth proxy
+
+./cloud_sql_proxy -instances=heroic-oarlock-340615:europe-north1:gotraining=tcp:3306
+
+
+
+Connect to db:
+
+$ psql -h 127.0.0.1 -p 5432 -U postgres
+
+
+
