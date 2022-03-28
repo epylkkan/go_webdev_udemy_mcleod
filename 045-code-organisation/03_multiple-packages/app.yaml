@@ -2,5 +2,27 @@ runtime: go116
 
 handlers:
 - url: /.*
-  script: auto
-  secure: always
+  script: main.go
+  #secure: always  
+  #login: admin
+#- url: /books/.*
+  #script: auto
+  #secure: always  
+#- url: /books/show/.*
+  #script: auto
+  #secure: always  
+#- url: /books/create/.*
+  #script: auto
+  #secure: always  
+#- url: /books/update/.*
+  #script: auto
+  #secure: always    
+#- url: /books/update/process.*
+  #script: auto
+  #secure: always    
+#- url: /books/create/process.*
+ #script: auto
+ #secure: always    
+#- url: /books/delete/process.*
+  #script: auto
+  #secure: always    
