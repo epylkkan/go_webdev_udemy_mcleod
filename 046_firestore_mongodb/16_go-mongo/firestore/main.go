@@ -11,7 +11,7 @@ import (
 	"context"
 	//"github.com/julienschmidt/httprouter"
 	//"encoding/json"	
-	//"strconv"
+	"strconv"
 	"html/template"
 )
 
@@ -38,11 +38,11 @@ func main() {
 	http.HandleFunc("/books", Index)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.HandleFunc("/books/show", Show)
-//	http.HandleFunc("/books/create", Create)
-//	http.HandleFunc("/books/create/process", CreateProcess)
-//	http.HandleFunc("/books/update", Update)
-//	http.HandleFunc("/books/update/process", UpdateProcess)
-//  http.HandleFunc("/books/delete/process", DeleteProcess)
+	http.HandleFunc("/books/create", Create)
+	http.HandleFunc("/books/create/process", CreateProcess)
+	http.HandleFunc("/books/update", Update)
+	http.HandleFunc("/books/update/process", UpdateProcess)
+    http.HandleFunc("/books/delete/process", DeleteProcess)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -85,9 +85,9 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	TPL.ExecuteTemplate(w, "show.gohtml", bk)
 }
 
-/*
+
 func Create(w http.ResponseWriter, r *http.Request) {
-	config.TPL.ExecuteTemplate(w, "create.gohtml", nil)
+	TPL.ExecuteTemplate(w, "create.gohtml", nil)
 }
 
 func CreateProcess(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +102,7 @@ func CreateProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	config.TPL.ExecuteTemplate(w, "created.gohtml", bk)
+	TPL.ExecuteTemplate(w, "created.gohtml", bk)
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +117,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	config.TPL.ExecuteTemplate(w, "update.gohtml", bk)
+	TPL.ExecuteTemplate(w, "update.gohtml", bk)
 }
 
 func UpdateProcess(w http.ResponseWriter, r *http.Request) {
@@ -132,8 +132,9 @@ func UpdateProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	config.TPL.ExecuteTemplate(w, "updated.gohtml", bk)
+	TPL.ExecuteTemplate(w, "updated.gohtml", bk)
 }
+
 
 func DeleteProcess(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -149,7 +150,7 @@ func DeleteProcess(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/books", http.StatusSeeOther)
 }
-*/
+
 
 func AllBooks() ([]Book, error) {
 	
@@ -204,7 +205,7 @@ func OneBook(r *http.Request) (Book, error) {
 	return bk, err
 }
 
-/*
+
 func PutBook(r *http.Request) (Book, error) {
 	// get form values
 	bk := Book{}
@@ -219,21 +220,32 @@ func PutBook(r *http.Request) (Book, error) {
 	}
 
 	// convert form values
-	f64, err := strconv.ParseFloat(p, 32)
+//	f64, err := strconv.ParseFloat(p, 32)
+	f64, err := strconv.ParseFloat(p, 64)
 	if err != nil {
 		return bk, errors.New("406. Not Acceptable. Price must be a number.")
 	}
-	bk.Price = float32(f64)
+	//bk.Price = float32(f64)
+	bk.Price = float64(f64)
 
 	// insert values
-	err = config.Books.Insert(bk)
+	//Mongo err = config.Books.Insert(bk)
+	
+	//_, _, err := client.Collection("books").Add(ctx, bk)
+	client.Collection("books").Add(ctx, bk)
+	
+	/*
 	if err != nil {
 		return bk, errors.New("500. Internal Server Error." + err.Error())
 	}
+	*/
 	return bk, nil
 }
 
 func UpdateBook(r *http.Request) (Book, error) {
+	
+	var id string
+
 	// get form values
 	bk := Book{}
 	bk.Isbn = r.FormValue("isbn")
@@ -241,7 +253,8 @@ func UpdateBook(r *http.Request) (Book, error) {
 	bk.Author = r.FormValue("author")
 	p := r.FormValue("price")
 
-	if bk.Isbn == "" || bk.Title == "" || bk.Author == "" || p == "" {
+	// if bk.Isbn == "" || bk.Title == "" || bk.Author == "" || p == "" {
+	if bk.Title == "" || bk.Author == "" || p == "" {		
 		return bk, errors.New("400. Bad Request. Fields can't be empty.")
 	}
 
@@ -250,27 +263,86 @@ func UpdateBook(r *http.Request) (Book, error) {
 	if err != nil {
 		return bk, errors.New("406. Not Acceptable. Enter number for price.")
 	}
-	bk.Price = float32(f64)
+	//bk.Price = float32(f64)
+	bk.Price = float64(int(f64*100))/100
 
 	// update values
-	err = config.Books.Update(bson.M{"isbn": bk.Isbn}, &bk)
+	//Mongo  err = config.Books.Update(bson.M{"isbn": bk.Isbn}, &bk)
+
+	bk_map := client.Collection("books").Where("Isbn", "==", bk.Isbn).Documents(ctx)
+
+	id = ""
+	for {
+        doc, err := bk_map.Next()
+        if err == iterator.Done {
+                break
+        }
+        if err != nil {
+                return Book{}, errors.New("400. Bad Request.")	
+        }
+		id = doc.Ref.ID
+
+		break
+	}
+
+	//res, err := client.Collection("books").Doc(id).Update(ctx, []firestore.Update{
+	client.Collection("books").Doc(id).Update(ctx, []firestore.Update{
+		{
+		Path: "Title", 
+		Value: bk.Title,
+		}, 
+		{
+		Path: "Author", 
+		Value: bk.Author,
+		}, 						
+		{
+		Path: "Price", 
+		Value: bk.Price,
+		},			
+	})
+	
 	if err != nil {
 		return bk, err
 	}
+	
 	return bk, nil
 }
 
 func DeleteBook(r *http.Request) error {
+
+	var id string
+
 	isbn := r.FormValue("isbn")
 	if isbn == "" {
 		return errors.New("400. Bad Request.")
 	}
 
-	err := config.Books.Remove(bson.M{"isbn": isbn})
+	// err := config.Books.Remove(bson.M{"isbn": isbn})
+
+	bk_map := client.Collection("books").Where("Isbn", "==", isbn).Documents(ctx)
+	
+	id = ""
+	for {
+        doc, err := bk_map.Next()
+        if err == iterator.Done {
+                break
+        }
+        if err != nil {
+                return errors.New("400. Bad Request.")	
+        }
+		
+		id = doc.Ref.ID
+		break
+	}
+
+	_, err := client.Collection("books").Doc(id).Delete(ctx)
+	
+	
 	if err != nil {
 		return errors.New("500. Internal Server Error")
 	}
+
+
 	return nil
 }
 
-*/
